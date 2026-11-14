@@ -349,9 +349,9 @@ body.quiet-intro #fx{display:none}
 
 <section id="entertainment-screen" class="screen">
   <div class="ent" id="ent">
-    <h2>DO YOU STILL LOVE ME?</h2>
-    <div class="no-row"><button class="no clickable">No</button><button class="no clickable">Nope</button><button class="no clickable">Never</button></div>
-    <button class="yes clickable" onclick="celebrate()"><svg class="ic fl"><use href="#i-heart"/></svg>YES</button>
+    <h2>Your birthday games are ready!</h2>
+    <p class="game-finish-note">Play five different mini-games to unlock one last question and a special message. 💖</p>
+    <button class="yes clickable" onclick="startGames()"><svg class="ic fl"><use href="#i-heart"/></svg>LET'S PLAY!</button>
   </div>
   <div id="party">
     <div id="game-play" class="game-play">
@@ -364,6 +364,12 @@ body.quiet-intro #fx{display:none}
       <div id="game-area" class="game-area"></div>
       <div id="game-feedback" class="game-feedback" aria-live="polite"></div>
       <button id="game-next" class="game-next clickable" hidden>Continue</button>
+    </div>
+    <div id="love-question" class="game-final" hidden>
+      <div class="trio"><svg class="ic fl"><use href="#i-spark"/></svg><svg class="ic fl"><use href="#i-heart"/></svg><svg class="ic fl"><use href="#i-spark"/></svg></div>
+      <h2>DO YOU STILL LOVE ME?</h2>
+      <div class="no-row"><button class="no clickable">No</button><button class="no clickable">Nope</button><button class="no clickable">Never</button></div>
+      <button id="love-yes" class="yes clickable" onclick="showLoveMessage()"><svg class="ic fl"><use href="#i-heart"/></svg>YES</button>
     </div>
     <div id="game-final" class="game-final" hidden>
       <div class="trio"><svg class="ic fl"><use href="#i-spark"/></svg><svg class="ic fl"><use href="#i-heart"/></svg><svg class="ic fl"><use href="#i-spark"/></svg></div>
@@ -533,7 +539,7 @@ for(let i=0;i<46;i++){const s=document.createElement('span');s.innerHTML=ic('spa
 /* ===== ENTERTAINMENT: the No buttons dodge around the screen ===== */
 const noBtns=[...document.querySelectorAll('.no')];
 function dodge(b){
-  const w=b.offsetWidth,h=b.offsetHeight,W=innerWidth,H=innerHeight,yes=document.querySelector('.yes').getBoundingClientRect(),pad=14;
+  const w=b.offsetWidth,h=b.offsetHeight,W=innerWidth,H=innerHeight,yes=document.getElementById('love-yes').getBoundingClientRect(),pad=14;
   b.style.position='fixed';b.style.transition='left .2s ease-out,top .2s ease-out';
   let x,y,tries=0;
   do{x=pad+Math.random()*Math.max(0,W-w-pad*2);y=pad+Math.random()*Math.max(0,H-h-pad*2-70);tries++}
@@ -541,9 +547,9 @@ function dodge(b){
   b.style.left=x+'px';b.style.top=y+'px';
 }
 noBtns.forEach(b=>{b.addEventListener('pointerenter',()=>dodge(b));b.addEventListener('click',()=>dodge(b))});
-function celebrate(){
-  document.getElementById('ent').style.display='none';noBtns.forEach(b=>b.style.display='none');document.getElementById('party').style.display='flex';
-  document.getElementById('game-play').hidden=false;document.getElementById('game-final').hidden=true;gameStage=0;renderGameStage();
+function startGames(){
+  document.getElementById('ent').style.display='none';document.getElementById('party').style.display='flex';
+  document.getElementById('game-play').hidden=false;document.getElementById('love-question').hidden=true;document.getElementById('game-final').hidden=true;gameStage=0;renderGameStage();
 }
 const loveGames=[
   {name:'Heart Hunt',q:'Stage 1: Heart Hunt',p:'Find all 5 hearts hiding among the other cute things.',play:playHeartHunt},
@@ -592,7 +598,7 @@ function renderGameStage(){
   document.getElementById('game-prompt').textContent=stage.p;
   gameFeedback.textContent='';
   gameNext.hidden=true;
-  gameNext.textContent=gameStage===loveGames.length-1?'Reveal your message 💌':'Next game';
+  gameNext.textContent='Next game';
   gameProgress.setAttribute('aria-valuenow',String(gameStage));
   document.getElementById('game-progress-fill').style.width=`${gameStage/loveGames.length*100}%`;
   gameArea.innerHTML='';
@@ -715,17 +721,21 @@ function playCatchMyHeart(){
 gameNext.addEventListener('click',()=>{
   if(gameStage===loveGames.length-1){
     document.getElementById('game-play').hidden=true;
-    document.getElementById('game-final').hidden=false;
-    for(let i=0;i<70;i++)setTimeout(()=>{const c=document.createElement('div'),d=2.5+Math.random()*2.5;c.className='conf';c.style.cssText=`left:${Math.random()*100}vw;font-size:${18+Math.random()*22}px;color:${COL[Math.random()*COL.length|0]};animation-duration:${d}s`;c.innerHTML=ic(SH[Math.random()*SH.length|0],'fl');document.body.appendChild(c);setTimeout(()=>c.remove(),d*1000)},i*45);
+    document.getElementById('love-question').hidden=false;
     return;
   }
   gameStage++;
   renderGameStage();
 });
+function showLoveMessage(){
+  document.getElementById('love-question').hidden=true;
+  document.getElementById('game-final').hidden=false;
+  for(let i=0;i<70;i++)setTimeout(()=>{const c=document.createElement('div'),d=2.5+Math.random()*2.5;c.className='conf';c.style.cssText=`left:${Math.random()*100}vw;font-size:${18+Math.random()*22}px;color:${COL[Math.random()*COL.length|0]};animation-duration:${d}s`;c.innerHTML=ic(SH[Math.random()*SH.length|0],'fl');document.body.appendChild(c);setTimeout(()=>c.remove(),d*1000)},i*45);
+}
 function resetEnt(){
   document.getElementById('ent').style.display='block';document.getElementById('party').style.display='none';
   noBtns.forEach(b=>{b.style.display='inline-block';b.style.position='';b.style.left='';b.style.top='';b.style.transition=''});
-  document.getElementById('game-play').hidden=false;document.getElementById('game-final').hidden=true;
+  document.getElementById('game-play').hidden=false;document.getElementById('love-question').hidden=true;document.getElementById('game-final').hidden=true;
   gameStage=0;renderGameStage();
 }
 
