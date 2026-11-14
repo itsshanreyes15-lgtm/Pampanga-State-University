@@ -197,6 +197,29 @@ body.quiet-intro #fx{display:none}
 .no-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:26px;min-height:54px}
 .no{background:linear-gradient(135deg,#7a55b8,var(--plum));color:#fff;border:none;padding:13px 28px;border-radius:999px;font:700 1.15rem 'Fredoka',sans-serif;box-shadow:0 6px 15px rgba(60,30,110,.4);z-index:40}
 .yes{background:linear-gradient(135deg,var(--hot),#ff0a54);color:#fff;border:none;padding:16px 56px;border-radius:999px;font:700 1.5rem 'Fredoka',sans-serif;box-shadow:0 10px 26px rgba(255,10,84,.45);animation:pulse 1.4s infinite;display:inline-flex;align-items:center;gap:10px}
+.game-play,.game-final{width:100%;text-align:center}
+.game-kicker{color:#b21d5b;font:700 .9rem 'Fredoka',sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.game-progress{height:12px;margin:12px 0 24px;border-radius:999px;background:#ffe0eb;overflow:hidden}
+.game-progress span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff7aa2,#d81b60);transition:width .35s ease}
+.game-question{margin:0 0 8px!important}
+.game-prompt{margin:0 0 18px;color:#68435a;font:500 1rem/1.5 'Fredoka',sans-serif}
+.game-area{width:100%;min-height:148px}
+.game-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:440px;margin:0 auto}
+.game-tile,.game-choice,.game-next{border:2px solid #ff9fc0;border-radius:16px;background:#fff5f8;color:#8f1749;font:700 1rem 'Fredoka',sans-serif;transition:transform .15s ease,background .15s ease,border-color .15s ease}
+.game-tile{min-height:62px;font-size:1.75rem}
+.game-tile:hover:not(:disabled),.game-choice:hover,.game-next:hover{transform:translateY(-2px);border-color:#d81b60;background:#ffe4ef}
+.game-tile:disabled{cursor:default;opacity:.72}
+.memory-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:270px}
+.game-choice-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.game-choice{min-width:92px;padding:13px 16px}
+.sequence-display{min-height:64px;margin:12px 0;color:#d81b60;font:700 2rem 'Fredoka',sans-serif;letter-spacing:.14em}
+.catch-field{position:relative;width:min(100%,420px);height:190px;margin:0 auto;border:2px dashed #ff9fc0;border-radius:20px;background:linear-gradient(135deg,#fff5f8,#ffe4ef);overflow:hidden}
+.catch-heart{position:absolute;width:58px;height:58px;padding:0;border:0;border-radius:50%;background:#fff;box-shadow:0 6px 15px rgba(216,27,96,.2);font-size:2rem;transition:left .2s ease,top .2s ease}
+.game-feedback{min-height:48px;margin:14px 0 8px;color:#9d1a52;font:600 1rem/1.5 'Fredoka',sans-serif}
+.game-next{width:100%;padding:13px 16px;background:linear-gradient(135deg,var(--hot),#ff0a54);border-color:transparent;color:#fff;box-shadow:0 8px 18px rgba(255,10,84,.25)}
+#game-final .trio{justify-content:center}
+#game-final h2{margin:14px 0}
+.game-finish-note{color:#68435a;font:500 1rem/1.5 'Fredoka',sans-serif}
 #party{display:none;flex-direction:column;align-items:center;text-align:center;background:rgba(255,255,255,.96);border:5px solid var(--hot);border-radius:32px;padding:36px 28px;width:min(740px,94vw);box-shadow:0 24px 60px rgba(255,10,84,.45);z-index:50;animation:pop .55s cubic-bezier(.34,1.56,.64,1) forwards}
 #party h2{font:600 clamp(1.5rem,3.6vw,2.4rem)/1.45 'Fredoka',sans-serif;color:#c9184a;margin:14px 0}
 .trio{display:flex;align-items:center;gap:14px;color:var(--rose)}
@@ -205,6 +228,7 @@ body.quiet-intro #fx{display:none}
 @keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.2)}60%{transform:scale(.95)}}
 .conf{position:fixed;top:-30px;pointer-events:none;z-index:60;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:560px){.ent{padding:28px 20px}.game-grid{gap:7px}.game-tile{min-height:56px}.game-choice{min-width:80px;padding:12px}} 
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 </style>
 </head>
@@ -330,9 +354,23 @@ body.quiet-intro #fx{display:none}
     <button class="yes clickable" onclick="celebrate()"><svg class="ic fl"><use href="#i-heart"/></svg>YES</button>
   </div>
   <div id="party">
-    <div class="trio"><svg class="ic fl"><use href="#i-spark"/></svg><svg class="ic fl"><use href="#i-heart"/></svg><svg class="ic fl"><use href="#i-spark"/></svg></div>
-    <h2>ILOVEYOUUU MOREEE BABYYLATTT, MAY ISA PAKONG SURPRISED ASK MO NALANG SAKIN HAHAHA</h2>
-    <div class="trio"><svg class="ic ln"><use href="#i-gift"/></svg></div>
+    <div id="game-play" class="game-play">
+      <div class="trio"><svg class="ic fl"><use href="#i-spark"/></svg><svg class="ic fl"><use href="#i-heart"/></svg><svg class="ic fl"><use href="#i-spark"/></svg></div>
+      <p class="game-kicker">A tiny birthday love game</p>
+      <p id="game-stage" class="game-kicker">Stage 1 of 5</p>
+      <div class="game-progress" role="progressbar" aria-label="Game progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><span id="game-progress-fill"></span></div>
+      <h2 id="game-question" class="game-question"></h2>
+      <p id="game-prompt" class="game-prompt"></p>
+      <div id="game-area" class="game-area"></div>
+      <div id="game-feedback" class="game-feedback" aria-live="polite"></div>
+      <button id="game-next" class="game-next clickable" hidden>Continue</button>
+    </div>
+    <div id="game-final" class="game-final" hidden>
+      <div class="trio"><svg class="ic fl"><use href="#i-spark"/></svg><svg class="ic fl"><use href="#i-heart"/></svg><svg class="ic fl"><use href="#i-spark"/></svg></div>
+      <h2>ILOVEYOUUU MOREEE BABYYLATTT, MAY ISA PAKONG SURPRISED ASK MO NALANG SAKIN HAHAHA</h2>
+      <p class="game-finish-note">You finished all five stages, birthday girl! I love you so, so much. 💖</p>
+      <div class="trio"><svg class="ic ln"><use href="#i-gift"/></svg></div>
+    </div>
   </div>
 </section>
 
@@ -408,7 +446,7 @@ const SECTIONS=[
  {id:'letter-screen',ic:'letter',t:'Letter for you',s:'Read my birthday message'},
  {id:'album-screen',ic:'album',t:'Album',s:'Our cutest moments & clips'},
  {id:'song-screen',ic:'song',t:'A song for you',s:'Open the secret envelope'},
- {id:'entertainment-screen',ic:'gift',t:'Entertainment',s:'One super important question'}];
+ {id:'entertainment-screen',ic:'gift',t:'Entertainment',s:'A tiny five-stage love game'}];
 let current=null;
 const choices=document.getElementById('choices');
 SECTIONS.forEach(s=>{const c=document.createElement('div');c.className='card clickable';c.dataset.id=s.id;c.innerHTML=`<div class="badge">${ic(s.ic)}</div><h3>${s.t}</h3><span>${s.s}</span>`;c.onclick=()=>{current=s.id;switchScreen(s.id)};choices.appendChild(c)});
@@ -505,11 +543,190 @@ function dodge(b){
 noBtns.forEach(b=>{b.addEventListener('pointerenter',()=>dodge(b));b.addEventListener('click',()=>dodge(b))});
 function celebrate(){
   document.getElementById('ent').style.display='none';noBtns.forEach(b=>b.style.display='none');document.getElementById('party').style.display='flex';
-  for(let i=0;i<70;i++)setTimeout(()=>{const c=document.createElement('div'),d=2.5+Math.random()*2.5;c.className='conf';c.style.cssText=`left:${Math.random()*100}vw;font-size:${18+Math.random()*22}px;color:${COL[Math.random()*COL.length|0]};animation-duration:${d}s`;c.innerHTML=ic(SH[Math.random()*SH.length|0],'fl');document.body.appendChild(c);setTimeout(()=>c.remove(),d*1000)},i*45);
+  document.getElementById('game-play').hidden=false;document.getElementById('game-final').hidden=true;gameStage=0;renderGameStage();
 }
+const loveGames=[
+  {name:'Heart Hunt',q:'Stage 1: Heart Hunt',p:'Find all 5 hearts hiding among the other cute things.',play:playHeartHunt},
+  {name:'Memory Match',q:'Stage 2: Memory Match',p:'Flip the cards and find both matching pairs.',play:playMemoryMatch},
+  {name:'Love Pattern',q:'Stage 3: Love Pattern',p:'Watch the pattern, then repeat it in the same order.',play:playLovePattern},
+  {name:'Rock, Paper, Scissors',q:'Stage 4: Rock, Paper, Scissors',p:'Beat me once to win this round. Ties and losses can be replayed!',play:playRockPaperScissors},
+  {name:'Catch My Heart',q:'Stage 5: Catch My Heart',p:'Catch the runaway heart 5 times to unlock your surprise.',play:playCatchMyHeart}
+];
+let gameStage=0;
+let gameCompleted=false;
+let gameTimers=[];
+const gameProgress=document.querySelector('.game-progress');
+const gameNext=document.getElementById('game-next');
+const gameArea=document.getElementById('game-area');
+const gameFeedback=document.getElementById('game-feedback');
+function shuffle(items){
+  for(let i=items.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[items[i],items[j]]=[items[j],items[i]]}
+  return items;
+}
+function scheduleGame(fn,delay){
+  const timer=setTimeout(()=>{gameTimers=gameTimers.filter(id=>id!==timer);fn()},delay);
+  gameTimers.push(timer);
+}
+function clearGameTimers(){gameTimers.forEach(clearTimeout);gameTimers=[]}
+function makeGameButton(label,className,ariaLabel){
+  const button=document.createElement('button');
+  button.type='button';button.className=className+' clickable';button.textContent=label;
+  if(ariaLabel)button.setAttribute('aria-label',ariaLabel);
+  return button;
+}
+function finishMiniGame(message){
+  if(gameCompleted)return;
+  gameCompleted=true;
+  gameFeedback.textContent=message;
+  gameNext.hidden=false;
+  gameArea.querySelectorAll('button').forEach(button=>button.disabled=true);
+  gameProgress.setAttribute('aria-valuenow',String(gameStage+1));
+  document.getElementById('game-progress-fill').style.width=`${(gameStage+1)/loveGames.length*100}%`;
+}
+function renderGameStage(){
+  clearGameTimers();
+  gameCompleted=false;
+  const stage=loveGames[gameStage];
+  document.getElementById('game-stage').textContent=`Stage ${gameStage+1} of ${loveGames.length} · ${stage.name}`;
+  document.getElementById('game-question').textContent=stage.q;
+  document.getElementById('game-prompt').textContent=stage.p;
+  gameFeedback.textContent='';
+  gameNext.hidden=true;
+  gameNext.textContent=gameStage===loveGames.length-1?'Reveal your message 💌':'Next game';
+  gameProgress.setAttribute('aria-valuenow',String(gameStage));
+  document.getElementById('game-progress-fill').style.width=`${gameStage/loveGames.length*100}%`;
+  gameArea.innerHTML='';
+  stage.play();
+}
+function playHeartHunt(){
+  const items=shuffle([
+    ...Array(5).fill({symbol:'💖',heart:true}),
+    ...['🌸','⭐','💌','🎁','🌷','🧸','✨'].map(symbol=>({symbol,heart:false}))
+  ]);
+  const grid=document.createElement('div');grid.className='game-grid';
+  let found=0;
+  items.forEach(item=>{
+    const tile=makeGameButton(item.symbol,'game-tile',item.heart?'Heart':'Decoy');
+    tile.addEventListener('click',()=>{
+      tile.disabled=true;
+      if(item.heart){
+        found++;
+        gameFeedback.textContent=`You found ${found} of 5 hearts!`;
+        if(found===5)finishMiniGame('All 5 hearts found! You found my heart too. 💖');
+      }else gameFeedback.textContent='Cute decoy! Keep hunting for hearts. ✨';
+    });
+    grid.appendChild(tile);
+  });
+  gameArea.appendChild(grid);
+  gameFeedback.textContent='Tap the hearts to collect them!';
+}
+function playMemoryMatch(){
+  const cards=shuffle(['💖','💖','🌸','🌸']);
+  const grid=document.createElement('div');grid.className='game-grid memory-grid';
+  let first=null,matches=0,locked=false;
+  cards.forEach(symbol=>{
+    const card=makeGameButton('?','game-tile','Hidden memory card');
+    card.dataset.symbol=symbol;
+    card.addEventListener('click',()=>{
+      if(locked||card.disabled||card===first)return;
+      card.textContent=symbol;card.setAttribute('aria-label',symbol);
+      if(!first){first=card;return}
+      if(first.dataset.symbol===symbol){
+        first.disabled=true;card.disabled=true;first=null;matches++;
+        gameFeedback.textContent='Match! You two are a perfect pair. 💕';
+        if(matches===2)finishMiniGame('You found both pairs—just like us, meant to match! 🌸');
+      }else{
+        const previous=first;first=null;locked=true;
+        gameFeedback.textContent='No match this time—remember where they were!';
+        scheduleGame(()=>{
+          previous.textContent='?';previous.setAttribute('aria-label','Hidden memory card');
+          card.textContent='?';card.setAttribute('aria-label','Hidden memory card');
+          locked=false;
+        },700);
+      }
+    });
+    grid.appendChild(card);
+  });
+  gameArea.appendChild(grid);
+  gameFeedback.textContent='Flip two cards and find the matching pairs.';
+}
+function playLovePattern(){
+  const sequence=['💖','⭐','🌸','💖'];
+  const display=document.createElement('div');display.className='sequence-display';display.setAttribute('aria-live','polite');
+  display.textContent=sequence.join('  ');
+  gameArea.appendChild(display);
+  gameFeedback.textContent='Memorize the pattern!';
+  scheduleGame(()=>{
+    display.textContent='?  ?  ?  ?';
+    gameFeedback.textContent='Now repeat it using the buttons.';
+    const controls=document.createElement('div');controls.className='game-choice-row';
+    const symbols=[['💖','Heart'],['⭐','Star'],['🌸','Flower']];
+    let position=0;
+    symbols.forEach(([symbol,label])=>{
+      const button=makeGameButton(label,'game-choice');
+      button.addEventListener('click',()=>{
+        if(symbol!==sequence[position]){
+          position=0;gameFeedback.textContent='Oops, start the pattern again from the beginning!';
+          return;
+        }
+        position++;
+        display.textContent=`${position} of ${sequence.length}`;
+        if(position===sequence.length)finishMiniGame('Perfect memory! You remembered our love pattern. ✨');
+      });
+      controls.appendChild(button);
+    });
+    gameArea.appendChild(controls);
+  },2800);
+}
+function playRockPaperScissors(){
+  const choices=[['rock','✊'],['paper','✋'],['scissors','✌️']];
+  const controls=document.createElement('div');controls.className='game-choice-row';
+  choices.forEach(([choice,emoji])=>{
+    const button=makeGameButton(`${emoji} ${choice}`,'game-choice');
+    button.addEventListener('click',()=>{
+      const opponent=choices[Math.random()*choices.length|0][0];
+      const won=(choice==='rock'&&opponent==='scissors')||(choice==='paper'&&opponent==='rock')||(choice==='scissors'&&opponent==='paper');
+      if(choice===opponent){gameFeedback.textContent=`We both picked ${opponent}—it's a tie! Try again. 🙈`;return}
+      if(won)finishMiniGame(`You picked ${choice} and beat my ${opponent}! You're too good. 🏆`);
+      else gameFeedback.textContent=`I picked ${opponent}—you can challenge me again! 😄`;
+    });
+    controls.appendChild(button);
+  });
+  gameArea.appendChild(controls);
+  gameFeedback.textContent='Choose your move!';
+}
+function playCatchMyHeart(){
+  const field=document.createElement('div');field.className='catch-field';
+  const heart=makeGameButton('💖','catch-heart','Catch the moving heart');
+  let caught=0;
+  const moveHeart=()=>{
+    const maxX=Math.max(0,field.clientWidth-58),maxY=Math.max(0,field.clientHeight-58);
+    heart.style.left=`${Math.random()*maxX}px`;heart.style.top=`${Math.random()*maxY}px`;
+  };
+  heart.addEventListener('click',()=>{
+    caught++;
+    if(caught===5){finishMiniGame('You caught my heart five times—and it is yours forever. 💘');return}
+    gameFeedback.textContent=`Caught ${caught} of 5! Catch it again!`;
+    moveHeart();
+  });
+  field.appendChild(heart);gameArea.appendChild(field);moveHeart();
+  gameFeedback.textContent='Catch the heart before it runs away!';
+}
+gameNext.addEventListener('click',()=>{
+  if(gameStage===loveGames.length-1){
+    document.getElementById('game-play').hidden=true;
+    document.getElementById('game-final').hidden=false;
+    for(let i=0;i<70;i++)setTimeout(()=>{const c=document.createElement('div'),d=2.5+Math.random()*2.5;c.className='conf';c.style.cssText=`left:${Math.random()*100}vw;font-size:${18+Math.random()*22}px;color:${COL[Math.random()*COL.length|0]};animation-duration:${d}s`;c.innerHTML=ic(SH[Math.random()*SH.length|0],'fl');document.body.appendChild(c);setTimeout(()=>c.remove(),d*1000)},i*45);
+    return;
+  }
+  gameStage++;
+  renderGameStage();
+});
 function resetEnt(){
   document.getElementById('ent').style.display='block';document.getElementById('party').style.display='none';
   noBtns.forEach(b=>{b.style.display='inline-block';b.style.position='';b.style.left='';b.style.top='';b.style.transition=''});
+  document.getElementById('game-play').hidden=false;document.getElementById('game-final').hidden=true;
+  gameStage=0;renderGameStage();
 }
 
 hydrateAll();
